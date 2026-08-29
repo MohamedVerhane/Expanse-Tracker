@@ -174,3 +174,310 @@
  GET /login 200 in 81ms (next.js: 18ms, application-code: 63ms)
  POST /dashboard 200 in 976ms (next.js: 18ms, application-code: 958ms)
   └─ ƒ logoutAction() in 787ms src/app/actions/auth.ts
+✓ Compiled in 3.3s
+ GET /login 200 in 2.8s (next.js: 911ms, application-code: 1891ms)
+ GET /login 200 in 178ms (next.js: 12ms, application-code: 166ms)
+ GET /login 200 in 278ms (next.js: 45ms, application-code: 233ms)
+ GET /login 200 in 193ms (next.js: 12ms, application-code: 181ms)
+ GET /login 200 in 262ms (next.js: 12ms, application-code: 250ms)
+ GET /login 200 in 200ms (next.js: 10ms, application-code: 190ms)
+ GET /login 200 in 193ms (next.js: 16ms, application-code: 177ms)
+ GET /login 200 in 203ms (next.js: 15ms, application-code: 188ms)
+ GET /login 200 in 131ms (next.js: 9ms, application-code: 122ms)
+ GET /login 200 in 794ms (next.js: 124ms, application-code: 670ms)
+ GET /login 200 in 149ms (next.js: 12ms, application-code: 136ms)
+ GET /login 200 in 129ms (next.js: 12ms, application-code: 118ms)
+ GET /login 200 in 170ms (next.js: 11ms, application-code: 159ms)
+ GET /login 200 in 288ms (next.js: 10ms, application-code: 279ms)
+ GET /login 200 in 301ms (next.js: 10ms, application-code: 291ms)
+ GET /login 200 in 229ms (next.js: 15ms, application-code: 214ms)
+ GET /login 200 in 213ms (next.js: 11ms, application-code: 202ms)
+ GET /login 200 in 267ms (next.js: 11ms, application-code: 256ms)
+ GET /login 200 in 198ms (next.js: 14ms, application-code: 184ms)
+ GET /login 200 in 181ms (next.js: 9ms, application-code: 172ms)
+ GET /login 200 in 157ms (next.js: 14ms, application-code: 144ms)
+ GET /login 200 in 384ms (next.js: 10ms, application-code: 374ms)
+ GET /login 200 in 356ms (next.js: 8ms, application-code: 347ms)
+ GET /login 200 in 179ms (next.js: 18ms, application-code: 161ms)
+ GET /login 200 in 1079ms (next.js: 11ms, application-code: 1067ms)
+ GET /login 200 in 1103ms (next.js: 9ms, application-code: 1095ms)
+ GET /login 200 in 356ms (next.js: 26ms, application-code: 330ms)
+ GET /login 200 in 286ms (next.js: 12ms, application-code: 274ms)
+⨯ ./package.json:8:5
+Error: Error parsing package.json file
+  [90m 6 |[0m     [32m"dev"[0m: [32m"next dev"[0m,
+  [90m 7 |[0m     [32m"build"[0m: [32m"prisma generate && prisma migrate deploy && next build"[0m
+[31m[1m>[0m [90m 8 |[0m     [32m"start"[0m: [32m"next start"[0m,
+  [90m   |[0m     [31m[1m^[0m
+  [90m 9 |[0m     [32m"lint"[0m: [32m"eslint"[0m,
+  [90m10 |[0m     [32m"db:migrate"[0m: [32m"prisma migrate dev"[0m,
+  [90m11 |[0m     [32m"db:push"[0m: [32m"prisma db push"[0m,
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+✓ Compiled in 2.9s
+○ Compiling /_error ...
+ GET /login 500 in 4.7s (next.js: 4.2s, application-code: 451ms)
+ GET /login 500 in 120ms (next.js: 69ms, application-code: 51ms)
+ GET /login 500 in 333ms (next.js: 68ms, application-code: 265ms)
+ GET /login 200 in 264ms (next.js: 17ms, application-code: 247ms)
+ GET /login 200 in 223ms (next.js: 42ms, application-code: 181ms)
+[browser] Uncaught Error: ./package.json:8:5
+Error: Error parsing package.json file
+   6 |     "dev": "next dev",
+   7 |     "build": "prisma generate && prisma migrate deploy && next build"
+>  8 |     "start": "next start",
+     |     ^
+   9 |     "lint": "eslint",
+  10 |     "db:migrate": "prisma migrate dev",
+  11 |     "db:push": "prisma db push",
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+    at <unknown> (Error: ./package.json:8:5)
+    at <unknown> (Error: (./package.json:8:5)
+ GET /login 200 in 69ms (next.js: 53ms, application-code: 16ms)
+ GET /login 200 in 184ms (next.js: 17ms, application-code: 166ms)
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+  #2 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/expenses.ts
+    ./src/app/(dashboard)/expenses/page.tsx
+
+  #3 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/session.ts
+    ./src/app/(dashboard)/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+  #2 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/expenses.ts
+    ./src/app/(dashboard)/expenses/page.tsx
+
+  #3 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/session.ts
+    ./src/app/(dashboard)/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+  #2 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/dashboard.ts
+    ./src/app/(dashboard)/dashboard/page.tsx
+
+  #3 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/session.ts
+    ./src/app/(dashboard)/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import traces:
+  #1 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+  #2 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/dashboard.ts
+    ./src/app/(dashboard)/dashboard/page.tsx
+
+  #3 [Server Component]:
+    ./src/lib/prisma.ts
+    ./src/lib/session.ts
+    ./src/app/(dashboard)/layout.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/lib/prisma.ts:3:1
+Error: Module not found: Can't resolve '../../generated/prisma/client'
+  [90m1 |[0m [36mimport[0m [32m"dotenv/config"[0m;
+  [90m2 |[0m [36mimport[0m { [33mPrismaMariaDb[0m } [36mfrom[0m [32m"@prisma/adapter-mariadb"[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { [33mPrismaClient[0m } [36mfrom[0m [32m"../../generated/prisma/client"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m
+  [90m5 |[0m [36mconst[0m prismaClientSingleton = () => {
+  [90m6 |[0m   [36mconst[0m adapter = [36mnew[0m [33mPrismaMariaDb[0m({
+
+
+
+Import trace:
+  Server Component:
+    ./src/lib/prisma.ts
+    ./src/app/actions/auth.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /login 200 in 122ms (next.js: 16ms, application-code: 106ms)
