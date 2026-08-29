@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        String    @id @default(cuid()) @db.VarChar(36)
+  name      String
+  email     String    @unique
+  password  String
+  expenses  Expense[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Expense {
+  id          String   @id @default(cuid()) @db.VarChar(36)
+  amount      Decimal  @db.Decimal(10, 2)
+  description String
+  date        DateTime @db.Date
+  userId      String   @db.VarChar(36)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String   @db.VarChar(36)
+  category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, categoryId])
+  @@index([userId, amount])
+}
+
+model Category {
+  id       String    @id @default(cuid()) @db.VarChar(36)
+  name     String    @unique
+  slug     String    @unique
+  color    String
+  expenses Expense[]
+
+  @@index([slug])
+}

@@ -1,0 +1,12 @@
+
+> expense-tracker@0.1.0 dev
+> next dev
+
+▲ Next.js 16.3.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.253.255.5:3000
+- Environments: .env
+✓ Ready in 3.0s
+✓ Running next.config.ts took 158ms
+
+ GET /icon?c6291c416cbaf2c4 200 in 4.1s (next.js: 1373ms, application-code: 2.7s)
