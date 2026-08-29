@@ -12,6 +12,7 @@ import type { SerializableExpense } from "@/types";
 import { todayInputValue } from "@/lib/utils";
 import { useTranslations } from "@/components/locale-provider";
 import { translateCategory } from "@/lib/i18n";
+import { motion } from "framer-motion";
 
 type CategoryLite = Pick<Category, "id" | "name" | "slug">;
 type ExpenseDTO = SerializableExpense & { amount: number };
@@ -53,8 +54,11 @@ export function ExpenseForm({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-      <form
+      <motion.form
         action={formAction}
+        initial={{ opacity: 0, scale: 0.95, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
         className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg"
       >
         <h2 className="mb-4 text-lg font-semibold">{editing ? t("form.editTitle") : t("form.addTitle")}</h2>
@@ -124,7 +128,7 @@ export function ExpenseForm({
           </Button>
           <SubmitButton editing={editing} />
         </div>
-      </form>
+      </motion.form>
     </div>
   );
 }

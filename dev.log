@@ -44,3 +44,11 @@
  POST /login 200 in 184ms (next.js: 16ms, application-code: 168ms)
   └─ ƒ setLocaleAction("ar") in 3ms src/app/actions/locale.ts
  GET /login 200 in 101ms (next.js: 11ms, application-code: 90ms)
+✓ Compiled in 1134ms
+ GET /login 200 in 164ms (next.js: 25ms, application-code: 138ms)
+ GET /login 200 in 742ms (next.js: 41ms, application-code: 701ms)
+ GET /login 200 in 130ms (next.js: 20ms, application-code: 110ms)
+ GET /login 200 in 84ms (next.js: 15ms, application-code: 69ms)
+ GET /login 200 in 110ms (next.js: 16ms, application-code: 94ms)
+ GET /login 200 in 194ms (next.js: 10ms, application-code: 184ms)
+✓ Finished filesystem cache database compaction in 12.4s

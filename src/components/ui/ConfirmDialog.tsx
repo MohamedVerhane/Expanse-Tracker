@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "./Button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "@/components/locale-provider";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
   open: boolean;
@@ -34,33 +35,41 @@ export function ConfirmDialog({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onCancel]);
 
-  if (!open) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-      onClick={onCancel}
-    >
-      <div
-        className={cn(
-          "w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg",
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg font-semibold">{resolvedTitle}</h2>
-        <p className="mt-2 text-sm text-muted">{resolvedDescription}</p>
-        <div className="mt-6 flex justify-end gap-3">
-          <Button variant="secondary" onClick={onCancel}>
-            {t("action.cancel")}
-          </Button>
-          <Button variant="danger" onClick={onConfirm}>
-            {resolvedConfirm}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={title}
+          onClick={onCancel}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          <motion.div
+            className={cn("w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg")}
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <h2 className="text-lg font-semibold">{resolvedTitle}</h2>
+            <p className="mt-2 text-sm text-muted">{resolvedDescription}</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <Button variant="secondary" onClick={onCancel}>
+                {t("action.cancel")}
+              </Button>
+              <Button variant="danger" onClick={onConfirm}>
+                {resolvedConfirm}
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

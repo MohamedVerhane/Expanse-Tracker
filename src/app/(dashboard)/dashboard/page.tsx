@@ -10,6 +10,7 @@ import { getLocale } from "@/lib/locale";
 import { translate, translateCategory } from "@/lib/i18n";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { FadeIn } from "@/components/ui/FadeIn";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -33,56 +34,70 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label={t("stat.total")} value={formatCurrency(stats.totalExpenses)} />
-        <StatCard
-          label={t("stat.thisMonth")}
-          value={formatCurrency(stats.currentMonth)}
-          hint={
-            stats.previousMonth > 0
-              ? `${monthDelta >= 0 ? "+" : ""}${formatCurrency(monthDelta)} vs last month`
-              : t("stat.noDataLastMonth")
-          }
-          trend={monthTrend}
-        />
-        <StatCard label={t("stat.lastMonth")} value={formatCurrency(stats.previousMonth)} />
-        <StatCard label={t("stat.transactions")} value={String(stats.transactionCount)} />
+        <FadeIn delay={0}>
+          <StatCard label={t("stat.total")} value={formatCurrency(stats.totalExpenses)} />
+        </FadeIn>
+        <FadeIn delay={0.05}>
+          <StatCard
+            label={t("stat.thisMonth")}
+            value={formatCurrency(stats.currentMonth)}
+            hint={
+              stats.previousMonth > 0
+                ? `${monthDelta >= 0 ? "+" : ""}${formatCurrency(monthDelta)} vs last month`
+                : t("stat.noDataLastMonth")
+            }
+            trend={monthTrend}
+          />
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <StatCard label={t("stat.lastMonth")} value={formatCurrency(stats.previousMonth)} />
+        </FadeIn>
+        <FadeIn delay={0.15}>
+          <StatCard label={t("stat.transactions")} value={String(stats.transactionCount)} />
+        </FadeIn>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>{t("chart.monthly")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MonthlyChart data={stats.monthly} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("chart.byCategory")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CategoryChart
-              data={stats.byCategory.map((c) => ({
-                ...c,
-                category: translateCategory(locale, c.slug, c.category),
-              }))}
-            />
-          </CardContent>
-        </Card>
+        <FadeIn delay={0.2} className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("chart.monthly")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <MonthlyChart data={stats.monthly} />
+            </CardContent>
+          </Card>
+        </FadeIn>
+        <FadeIn delay={0.25}>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("chart.byCategory")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CategoryChart
+                data={stats.byCategory.map((c) => ({
+                  ...c,
+                  category: translateCategory(locale, c.slug, c.category),
+                }))}
+              />
+            </CardContent>
+          </Card>
+        </FadeIn>
       </div>
 
-      <Card>
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle>{t("recent.title")}</CardTitle>
-          <Link href="/expenses" className="text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400">
-            {t("action.seeAll")}
-          </Link>
-        </CardHeader>
-        <CardContent>
-          <RecentExpenseList items={stats.recentExpenses} />
-        </CardContent>
-      </Card>
+      <FadeIn delay={0.3}>
+        <Card>
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle>{t("recent.title")}</CardTitle>
+            <Link href="/expenses" className="text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400">
+              {t("action.seeAll")}
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <RecentExpenseList items={stats.recentExpenses} />
+          </CardContent>
+        </Card>
+      </FadeIn>
     </div>
   );
 }
