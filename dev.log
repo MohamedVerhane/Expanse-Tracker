@@ -620,3 +620,4 @@ package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 colum
 
     at <unknown> (Error: ./package.json:8:5)
     at <unknown> (Error: (./package.json:8:5)
+ GET /login 200 in 787ms (next.js: 60ms, application-code: 728ms)
