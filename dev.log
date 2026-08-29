@@ -68,3 +68,109 @@
  GET /dashboard 200 in 438ms (next.js: 25ms, application-code: 413ms)
  GET /expenses 200 in 150ms (next.js: 10ms, application-code: 140ms)
  GET /dashboard 200 in 175ms (next.js: 10ms, application-code: 165ms)
+ GET /dashboard 200 in 840ms (next.js: 67ms, application-code: 773ms)
+ GET /login 200 in 108ms (next.js: 53ms, application-code: 55ms)
+ POST /dashboard 200 in 203ms (next.js: 53ms, application-code: 150ms)
+  └─ ƒ logoutAction() in 16ms src/app/actions/auth.ts
+ GET /dashboard 200 in 399ms (next.js: 23ms, application-code: 376ms)
+ POST /login 200 in 929ms (next.js: 10ms, application-code: 919ms)
+  └─ ƒ loginAction({}, {}) in 420ms src/app/actions/auth.ts
+ GET /expenses 200 in 226ms (next.js: 114ms, application-code: 112ms)
+ GET /expenses?page=2 200 in 432ms (next.js: 20ms, application-code: 412ms)
+  Reload env: .env
+⨯ Error: UNAUTHORIZED
+    at requireUser (src\lib\session.ts:20:11)
+    at async ExpensesPage (src\app\(dashboard)\expenses\page.tsx:21:16)
+  18 |   const user = await getCurrentUser();
+  19 |   if (!user) {
+> 20 |     throw new Error("UNAUTHORIZED");
+     |           ^
+  21 |   }
+  22 |   return user;
+  23 | } {
+  digest: '463417029'
+}
+  Reload env: .env
+ GET /expenses?page=2 200 in 4.7s (next.js: 4.2s, application-code: 504ms)
+⨯ Error: UNAUTHORIZED
+    at requireUser (src\lib\session.ts:20:11)
+    at async ExpensesPage (src\app\(dashboard)\expenses\page.tsx:21:16)
+  18 |   const user = await getCurrentUser();
+  19 |   if (!user) {
+> 20 |     throw new Error("UNAUTHORIZED");
+     |           ^
+  21 |   }
+  22 |   return user;
+  23 | } {
+  digest: '463417029'
+}
+ GET /expenses?page=2 200 in 672ms (next.js: 505ms, application-code: 168ms)
+ GET /login 200 in 359ms (next.js: 304ms, application-code: 55ms)
+ GET /login 200 in 59ms (next.js: 23ms, application-code: 36ms)
+  Reload env: .env
+ GET /login 200 in 418ms (next.js: 245ms, application-code: 173ms)
+  Reload env: .env
+ GET /login 200 in 348ms (next.js: 261ms, application-code: 87ms)
+  Reload env: .env
+ GET /login 200 in 409ms (next.js: 260ms, application-code: 149ms)
+  Reload env: .env
+ GET /login 200 in 331ms (next.js: 250ms, application-code: 81ms)
+  Reload env: .env
+ GET /login 200 in 372ms (next.js: 283ms, application-code: 89ms)
+  Reload env: .env
+ GET /login 200 in 565ms (next.js: 366ms, application-code: 198ms)
+  Reload env: .env
+ GET /login 200 in 423ms (next.js: 347ms, application-code: 75ms)
+ GET /login 200 in 427ms (next.js: 266ms, application-code: 161ms)
+  Reload env: .env
+ GET /login 200 in 561ms (next.js: 390ms, application-code: 172ms)
+  Reload env: .env
+ GET /login 200 in 1021ms (next.js: 757ms, application-code: 264ms)
+  Reload env: .env
+ GET /login 200 in 451ms (next.js: 317ms, application-code: 134ms)
+  Reload env: .env
+ GET /login 200 in 309ms (next.js: 239ms, application-code: 70ms)
+  Reload env: .env
+ GET /login 200 in 856ms (next.js: 324ms, application-code: 532ms)
+  Reload env: .env
+ GET /login 200 in 502ms (next.js: 427ms, application-code: 75ms)
+  Reload env: .env
+ GET /login 200 in 328ms (next.js: 244ms, application-code: 85ms)
+  Reload env: .env
+  Reload env: .env
+ GET /login 200 in 1339ms (next.js: 1125ms, application-code: 215ms)
+ GET /login 200 in 84ms (next.js: 16ms, application-code: 68ms)
+  Reload env: .env
+ GET /login 200 in 3.0s (next.js: 2.4s, application-code: 665ms)
+  Reload env: .env
+ GET /login 200 in 635ms (next.js: 564ms, application-code: 71ms)
+  Reload env: .env
+ GET /login 200 in 1937ms (next.js: 1455ms, application-code: 482ms)
+  Reload env: .env
+ GET /login 200 in 1546ms (next.js: 1476ms, application-code: 70ms)
+  Reload env: .env
+  Reload env: .env
+ GET /login 200 in 1617ms (next.js: 595ms, application-code: 1022ms)
+ GET /login 200 in 1034ms (next.js: 552ms, application-code: 482ms)
+ GET /login 200 in 704ms (next.js: 260ms, application-code: 444ms)
+ GET /login 200 in 2.1s (next.js: 19ms, application-code: 2.1s)
+ POST /login 200 in 1993ms (next.js: 45ms, application-code: 1947ms)
+  └─ ƒ loginAction({}, {}) in 1568ms src/app/actions/auth.ts
+ GET /dashboard 200 in 917ms (next.js: 346ms, application-code: 571ms)
+ POST /login 200 in 1513ms (next.js: 9ms, application-code: 1504ms)
+  └─ ƒ loginAction({"error":"Invalid email or password."}, {}) in 404ms src/app/actions/auth.ts
+ GET /expenses 200 in 499ms (next.js: 385ms, application-code: 114ms)
+ GET /expenses?page=1 200 in 113ms (next.js: 25ms, application-code: 88ms)
+ GET /expenses?categoryId=cmtdhxdwa0000xk8vgrlu4uw6&page=1 200 in 350ms (next.js: 177ms, application-code: 173ms)
+ GET /dashboard 200 in 289ms (next.js: 49ms, application-code: 240ms)
+ GET /expenses 200 in 120ms (next.js: 21ms, application-code: 99ms)
+ POST /expenses 200 in 359ms (next.js: 16ms, application-code: 344ms)
+  └─ ƒ createExpenseAction({}, {}) in 239ms src/app/actions/expenses.ts
+ GET /expenses 200 in 126ms (next.js: 15ms, application-code: 111ms)
+ GET /dashboard 200 in 255ms (next.js: 20ms, application-code: 235ms)
+ POST /dashboard 200 in 377ms (next.js: 48ms, application-code: 329ms)
+  └─ ƒ setLocaleAction("en") in 3ms src/app/actions/locale.ts
+ GET /dashboard 200 in 415ms (next.js: 19ms, application-code: 396ms)
+ GET /login 200 in 81ms (next.js: 18ms, application-code: 63ms)
+ POST /dashboard 200 in 976ms (next.js: 18ms, application-code: 958ms)
+  └─ ƒ logoutAction() in 787ms src/app/actions/auth.ts
