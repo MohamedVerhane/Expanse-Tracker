@@ -157,7 +157,3 @@ expense-tracker/
 - Pagination cursor optimization and server-side caching.
 - End-to-end and integration tests (Vitest + Playwright).
 - Account settings (change password, delete account).
-
-## License
-
-This project is provided as-is for learning purposes.

@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider } from "@/components/locale-provider";
 import { Toaster } from "sonner";
 import { getLocale } from "@/lib/locale";
-import { getDir } from "@/lib/i18n";
+import { getDir, translate } from "@/lib/i18n";
 
 config.autoAddCss = false;
 
@@ -27,10 +27,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Expense Tracker",
-  description: "Track and manage your personal expenses.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: translate(locale, "app.title"),
+    description: translate(locale, "app.description"),
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();

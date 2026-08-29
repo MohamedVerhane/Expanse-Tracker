@@ -10,3 +10,37 @@
 ✓ Running next.config.ts took 158ms
 
  GET /icon?c6291c416cbaf2c4 200 in 4.1s (next.js: 1373ms, application-code: 2.7s)
+ GET /dashboard 200 in 4.2s (next.js: 1084ms, application-code: 3.1s)
+ POST /dashboard 200 in 781ms (next.js: 16ms, application-code: 765ms)
+  └─ ƒ setLocaleAction("ar") in 29ms src/app/actions/locale.ts
+ GET /dashboard 200 in 433ms (next.js: 74ms, application-code: 360ms)
+ GET /expenses 200 in 376ms (next.js: 170ms, application-code: 207ms)
+ GET /dashboard 200 in 298ms (next.js: 9ms, application-code: 289ms)
+ GET /login 200 in 280ms (next.js: 182ms, application-code: 98ms)
+ POST /dashboard 200 in 348ms (next.js: 11ms, application-code: 337ms)
+  └─ ƒ logoutAction() in 18ms src/app/actions/auth.ts
+ GET /register 200 in 249ms (next.js: 191ms, application-code: 58ms)
+ GET /login 200 in 57ms (next.js: 12ms, application-code: 45ms)
+ POST /login 200 in 80ms (next.js: 13ms, application-code: 67ms)
+  └─ ƒ setLocaleAction("en") in 13ms src/app/actions/locale.ts
+ GET /login 200 in 58ms (next.js: 11ms, application-code: 48ms)
+ POST /login 200 in 1514ms (next.js: 549ms, application-code: 965ms)
+  └─ ƒ setLocaleAction("ar") in 36ms src/app/actions/locale.ts
+ GET /login 200 in 119ms (next.js: 31ms, application-code: 88ms)
+✓ Compiled in 2.5s
+⚠ Fast Refresh had to perform a full reload when ./src/lib/i18n.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /login 200 in 1075ms (next.js: 244ms, application-code: 831ms)
+ GET /login 200 in 836ms (next.js: 131ms, application-code: 705ms)
+ GET /icon?c6291c416cbaf2c4 200 in 404ms (next.js: 78ms, application-code: 326ms)
+⚠ Fast Refresh had to perform a full reload when ./src/lib/i18n.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+✓ Compiled in 422ms
+ GET /login 200 in 619ms (next.js: 155ms, application-code: 465ms)
+ GET /login 200 in 645ms (next.js: 64ms, application-code: 580ms)
+ GET /icon?c6291c416cbaf2c4 200 in 128ms (next.js: 31ms, application-code: 98ms)
+ GET /login 200 in 107ms (next.js: 32ms, application-code: 74ms)
+ POST /login 200 in 163ms (next.js: 91ms, application-code: 72ms)
+  └─ ƒ setLocaleAction("en") in 3ms src/app/actions/locale.ts
+ GET /login 200 in 216ms (next.js: 10ms, application-code: 206ms)
+ POST /login 200 in 184ms (next.js: 16ms, application-code: 168ms)
+  └─ ƒ setLocaleAction("ar") in 3ms src/app/actions/locale.ts
+ GET /login 200 in 101ms (next.js: 11ms, application-code: 90ms)
