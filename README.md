@@ -1,159 +1,99 @@
 # Expense Tracker
 
-A full-stack personal expense management application built with **Next.js (App Router)**, **React**, **TypeScript**, **Tailwind CSS**, **Prisma**, and **MySQL**. Track your spending, organize expenses by category, and visualize trends through an interactive dashboard.
+A full-stack personal expense tracker built with Next.js. Track your spending, filter and sort expenses, and see where your money goes through simple dashboard charts.
 
 ## Features
 
-- **Authentication** — Register, login, logout, secure password hashing (bcrypt), JWT sessions in HTTP-only cookies, protected routes via middleware, and per-user data isolation.
-- **Expense CRUD** — Create, read, update, and delete expenses with amount, description, category, and date.
-- **Categories** — Predefined categories (Food, Transport, Education, Entertainment, Shopping, Bills, Health, Other) seeded into the database and designed to be extended.
-- **Dashboard** — Total expenses, current/previous month totals, transaction count, recent expenses, expenses-by-category chart, and a 6-month expense trend chart.
-- **Search & Filtering** — Search by description, filter by category/date range/amount range, and sort by description, category, date, or amount.
-- **Modern UI** — Responsive layout, sidebar + navbar, dark mode, loading/empty/error states, confirmation dialogs, and toast notifications.
+- Email/password authentication with JWT sessions stored in HTTP-only cookies
+- Create, edit, and delete expenses with categories
+- Search, filter (category, date range, amount range), sort, and paginate
+- Dashboard with totals, monthly trend, and a breakdown by category
+- Light / dark theme
+- Bilingual UI: English and Arabic, with full RTL layout support
+- Responsive layout (sidebar on desktop, drawer on mobile)
 
-## Tech Stack
+## Tech stack
 
-| Layer        | Technology                                   |
-| ------------ | -------------------------------------------- |
-| Framework    | Next.js 16 (App Router)                      |
-| UI           | React 19, Tailwind CSS v4                    |
-| Language     | TypeScript                                   |
-| Database     | MySQL                                        |
-| ORM          | Prisma 7 (with `@prisma/adapter-mariadb`)    |
-| Auth         | `jose` (JWT) + `bcryptjs` (hashing)          |
-| Charts       | Recharts                                     |
-| Theme        | `next-themes`                                |
-| Toasts       | `sonner`                                     |
-| Validation   | `zod`                                        |
+- [Next.js](https://nextjs.org) (App Router) + React + TypeScript
+- [Tailwind CSS](https://tailwindcss.com) v4
+- MySQL via [Prisma](https://www.prisma.io) ORM
+- Auth: [jose](https://github.com/panva/jose) (JWT) + [bcryptjs](https://github.com/dcodeIO/bcrypt.js) + [zod](https://github.com/colinhacks/zod)
+- Charts: [Recharts](https://recharts.org)
+- Theme: [next-themes](https://github.com/pacocoursey/next-themes), toasts via [sonner](https://sonner.emilkowal.ski)
+- Icons: [Font Awesome](https://fontawesome.com)
 
 ## Requirements
 
-- Node.js 20.9+ (Node 24 recommended)
-- MySQL 8+ server running and reachable
-- npm (or pnpm/yarn)
+- Node.js 18+ (Node 20+ recommended)
+- A MySQL database (e.g. via WAMP, XAMPP, or Docker)
 
-## Installation
+## Getting started
 
-```bash
-# 1. Clone the repository
-git clone <your-repo-url>
-cd expense-tracker
+1. Install dependencies:
 
-# 2. Install dependencies
-npm install
-```
+   ```bash
+   npm install
+   ```
 
-## Environment Variables
+2. Create a `.env` file (see `.env.example`):
 
-Copy the example file and fill in your values:
+   ```ini
+   DATABASE_URL="mysql://root:@localhost:3306/expense_tracker"
+   DATABASE_PASSWORD=""
+   AUTH_SECRET="replace-with-a-long-random-string"
+   ```
 
-```bash
-cp .env.example .env
-```
+   > `AUTH_SECRET` should be at least 16 characters. Generate one with `openssl rand -base64 32`.
 
-| Variable          | Description                                                       |
-| ----------------- | ---------------------------------------------------------------- |
-| `DATABASE_URL`    | MySQL connection string used by Prisma CLI/migrations           |
-| `DATABASE_HOST`   | MySQL host (used by the runtime driver adapter)                 |
-| `DATABASE_USER`   | MySQL user                                                       |
-| `DATABASE_PASSWORD` | MySQL password                                                 |
-| `DATABASE_NAME`   | MySQL database name                                              |
-| `DATABASE_PORT`   | MySQL port (default `3306`)                                      |
-| `AUTH_SECRET`     | Long random string (min 16 chars) used to sign session JWTs     |
+3. Run the database migration and seed the default categories:
 
-Example:
+   ```bash
+   npm run db:migrate
+   npm run db:seed
+   ```
 
-```env
-DATABASE_URL="mysql://root:password@localhost:3306/expense_tracker"
-DATABASE_HOST="localhost"
-DATABASE_USER="root"
-DATABASE_PASSWORD=""
-DATABASE_NAME="expense_tracker"
-DATABASE_PORT=3306
-AUTH_SECRET="replace-with-a-long-random-secret-string"
-```
+4. Start the dev server:
 
-> Never commit your real `.env` file. It is git-ignored.
+   ```bash
+   npm run dev
+   ```
 
-## Database Setup
+   Open http://localhost:3000 and create an account.
 
-```bash
-# Create the database tables (applies the migration in prisma/migrations)
-npm run db:migrate
+## Scripts
 
-# (Optional) Seed the default categories
-npm run db:seed
-```
+| Script               | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `npm run dev`        | Start the development server                 |
+| `npm run build`      | Build for production                         |
+| `npm run start`      | Run the production build                     |
+| `npm run lint`       | Lint with ESLint                             |
+| `npm run db:migrate` | Apply Prisma migrations                      |
+| `npm run db:push`    | Push schema to the database (no migration)   |
+| `npm run db:seed`    | Seed default categories (production data)    |
+| `npm run db:seed:demo` | Seed demo users + sample expenses (dev only) |
 
-If you prefer to apply the schema directly without migration history:
+## Demo data
+
+For local testing you can load demo data (20 users + 10,000 expenses):
 
 ```bash
-npm run db:push
+npm run db:seed:demo
 ```
 
-## Running the Project
+Then sign in with `user1@example.com` … `user20@example.com` (password `Password123!`).
 
-```bash
-# Development
-npm run dev
+## Internationalization
 
-# Production build
-npm run build
-npm run start
-```
+The app ships in English and Arabic. The language switcher (top-right) stores the choice in a cookie and flips the layout to RTL for Arabic. Category names and UI strings are translated; chart axes and spacing also adapt to the reading direction.
 
-Then open [http://localhost:3000](http://localhost:3000).
-
-## Project Structure
+## Project structure
 
 ```
-expense-tracker/
-├── prisma/
-│   ├── schema.prisma          # Prisma models (User, Expense, Category)
-│   ├── seed.ts                # Seeds default categories
-│   └── migrations/            # SQL migrations
-├── generated/prisma/          # Generated Prisma Client (git-ignored)
-├── src/
-│   ├── app/
-│   │   ├── (auth)/            # Login & Register pages (public)
-│   │   ├── (dashboard)/       # Dashboard & Expenses (protected)
-│   │   ├── actions/           # Server actions (auth, expenses)
-│   │   ├── page.tsx           # Root redirect
-│   │   └── layout.tsx         # Root layout (theme + toasts)
-│   ├── components/
-│   │   ├── ui/                # Button, Card, Input, Badge, ConfirmDialog
-│   │   ├── auth/              # Login/Register forms
-│   │   ├── layout/            # DashboardShell (sidebar + navbar)
-│   │   ├── charts/            # Recharts wrappers
-│   │   ├── dashboard/         # StatCard
-│   │   └── expenses/          # Toolbar, Table, Form, Recent list
-│   ├── lib/
-│   │   ├── prisma.ts          # Prisma client singleton (driver adapter)
-│   │   ├── auth.ts            # Password hashing + session JWT
-│   │   ├── session.ts         # Current user resolver
-│   │   ├── expenses.ts        # Expense data-access layer
-│   │   ├── dashboard.ts       # Dashboard stats queries
-│   │   ├── validation.ts      # Zod schemas
-│   │   ├── constants.ts       # Default categories
-│   │   └── utils.ts           # Formatting helpers
-│   └── types/                 # Shared TypeScript types
-├── middleware.ts              # Route protection
-├── prisma.config.ts          # Prisma CLI config
-└── .env.example
+src/
+  app/            # routes: (auth), (dashboard), api-less actions
+  components/     # UI, layout, charts, auth, expenses
+  lib/            # prisma client, auth, i18n, validation, utils
+  actions/        # server actions (auth, expenses, locale)
+prisma/           # schema, migrations, seed scripts
 ```
-
-## Architecture Notes
-
-- **Concern separation** — UI components, server actions, database access (`lib/expenses.ts`, `lib/dashboard.ts`), validation (`lib/validation.ts`), auth (`lib/auth.ts`), and types are kept in separate modules.
-- **Data isolation** — Every query scopes results by `userId`. Users can never read or modify another user's data.
-- **Security** — Passwords are hashed with bcrypt; sessions are signed JWTs stored in HTTP-only cookies; all inputs are validated with Zod on the server; secrets come from environment variables only.
-
-## Future Improvements
-
-- Export expenses to CSV/PDF.
-- Recurring expenses and budgeting limits.
-- Editable/deletable categories with per-user custom categories.
-- Multi-currency support and localized formatting.
-- Pagination cursor optimization and server-side caching.
-- End-to-end and integration tests (Vitest + Playwright).
-- Account settings (change password, delete account).
