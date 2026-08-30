@@ -623,3 +623,81 @@ package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 colum
  GET /login 200 in 787ms (next.js: 60ms, application-code: 728ms)
  GET /login 200 in 189ms (next.js: 20ms, application-code: 169ms)
  GET /login 200 in 3.1s (next.js: 459ms, application-code: 2.6s)
+ GET /login 200 in 13.2s (next.js: 11.9s, application-code: 1331ms)
+ GET /login 200 in 305ms (next.js: 94ms, application-code: 211ms)
+ GET /icon?c6291c416cbaf2c4 200 in 1833ms (next.js: 1180ms, application-code: 653ms)
+ GET /dashboard 200 in 1957ms (next.js: 1035ms, application-code: 922ms)
+ POST /login 200 in 2.9s (next.js: 17ms, application-code: 2.9s)
+  └─ ƒ loginAction({}, {}) in 802ms src/app/actions/auth.ts
+ GET /dashboard 200 in 1665ms (next.js: 575ms, application-code: 1090ms)
+⨯ ./package.json:8:5
+Error: Error parsing package.json file
+  [90m 6 |[0m     [32m"dev"[0m: [32m"next dev"[0m,
+  [90m 7 |[0m     [32m"build"[0m: [32m"prisma generate && prisma migrate deploy && next build"[0m
+[31m[1m>[0m [90m 8 |[0m     [32m"start"[0m: [32m"next start"[0m,
+  [90m   |[0m     [31m[1m^[0m
+  [90m 9 |[0m     [32m"lint"[0m: [32m"eslint"[0m,
+  [90m10 |[0m     [32m"db:migrate"[0m: [32m"prisma migrate dev"[0m,
+  [90m11 |[0m     [32m"db:push"[0m: [32m"prisma db push"[0m,
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+✓ Compiled in 457ms
+ GET /dashboard 500 in 320ms (next.js: 181ms, application-code: 139ms)
+⨯ ./package.json:8:5
+Error: Error parsing package.json file
+  [90m 6 |[0m     [32m"dev"[0m: [32m"next dev"[0m,
+  [90m 7 |[0m     [32m"build"[0m: [32m"prisma generate && prisma migrate deploy && next build"[0m
+[31m[1m>[0m [90m 8 |[0m     [32m"start"[0m: [32m"next start"[0m,
+  [90m   |[0m     [31m[1m^[0m
+  [90m 9 |[0m     [32m"lint"[0m: [32m"eslint"[0m,
+  [90m10 |[0m     [32m"db:migrate"[0m: [32m"prisma migrate dev"[0m,
+  [90m11 |[0m     [32m"db:push"[0m: [32m"prisma db push"[0m,
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+⨯ ./package.json:8:5
+Error: Error parsing package.json file
+  [90m 6 |[0m     [32m"dev"[0m: [32m"next dev"[0m,
+  [90m 7 |[0m     [32m"build"[0m: [32m"prisma generate && prisma migrate deploy && next build"[0m
+[31m[1m>[0m [90m 8 |[0m     [32m"start"[0m: [32m"next start"[0m,
+  [90m   |[0m     [31m[1m^[0m
+  [90m 9 |[0m     [32m"lint"[0m: [32m"eslint"[0m,
+  [90m10 |[0m     [32m"db:migrate"[0m: [32m"prisma migrate dev"[0m,
+  [90m11 |[0m     [32m"db:push"[0m: [32m"prisma db push"[0m,
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+ GET /dashboard 500 in 102ms (next.js: 64ms, application-code: 38ms)
+ GET /dashboard 500 in 116ms (next.js: 77ms, application-code: 39ms)
+⨯ ./package.json:8:5
+Error: Error parsing package.json file
+  [90m 6 |[0m     [32m"dev"[0m: [32m"next dev"[0m,
+  [90m 7 |[0m     [32m"build"[0m: [32m"prisma generate && prisma migrate deploy && next build"[0m
+[31m[1m>[0m [90m 8 |[0m     [32m"start"[0m: [32m"next start"[0m,
+  [90m   |[0m     [31m[1m^[0m
+  [90m 9 |[0m     [32m"lint"[0m: [32m"eslint"[0m,
+  [90m10 |[0m     [32m"db:migrate"[0m: [32m"prisma migrate dev"[0m,
+  [90m11 |[0m     [32m"db:push"[0m: [32m"prisma db push"[0m,
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+[browser] Uncaught Error: ./package.json:8:5
+Error: Error parsing package.json file
+   6 |     "dev": "next dev",
+   7 |     "build": "prisma generate && prisma migrate deploy && next build"
+>  8 |     "start": "next start",
+     |     ^
+   9 |     "lint": "eslint",
+  10 |     "db:migrate": "prisma migrate dev",
+  11 |     "db:push": "prisma db push",
+
+package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 column 5
+
+
+    at <unknown> (Error: ./package.json:8:5)
+    at <unknown> (Error: (./package.json:8:5)
