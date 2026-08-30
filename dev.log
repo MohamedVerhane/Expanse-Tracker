@@ -701,3 +701,5 @@ package.json is not parseable: invalid JSON: expected `,` or `}` at line 8 colum
 
     at <unknown> (Error: ./package.json:8:5)
     at <unknown> (Error: (./package.json:8:5)
+ GET /dashboard 500 in 154ms
+ GET /dashboard 200 in 4.8s (next.js: 67ms, application-code: 4.8s)
