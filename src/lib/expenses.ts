@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "./prisma";
+import { prisma, seedDefaultCategories } from "./prisma";
 import { Prisma } from "@generated/prisma/client";
 import type { ExpenseFilters } from "@/types";
 import type { ExpenseWithCategory, SerializableExpense } from "@/types";
@@ -9,6 +9,7 @@ function toSerializable(expense: ExpenseWithCategory): SerializableExpense {
 }
 
 export async function getCategories() {
+  await seedDefaultCategories();
   return prisma.category.findMany({ orderBy: { name: "asc" } });
 }
 
