@@ -41,7 +41,10 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
   } catch (error) {
     console.error("Failed to send verification email:", error);
     await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
-    return { error: "We couldn't send the verification email. Please try again later." };
+    return {
+      error:
+        "We couldn't send the verification email. Make sure the email service is configured correctly, then try again.",
+    };
   }
 
   redirect(`/verify-email?email=${encodeURIComponent(email)}`);

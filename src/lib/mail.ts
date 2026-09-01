@@ -12,11 +12,19 @@ type SmtpConfig = {
 };
 
 function getSmtpConfig(): SmtpConfig {
+  const user = process.env.MAILTRAP_USER ?? "";
+  const pass = process.env.MAILTRAP_PASS ?? "";
+  if (!user || !pass) {
+    throw new Error(
+      "SMTP is not configured: MAILTRAP_USER and MAILTRAP_PASS must be set (see .env.example).",
+    );
+  }
+
   return {
     host: process.env.MAILTRAP_HOST ?? "sandbox.smtp.mailtrap.io",
     port: Number(process.env.MAILTRAP_PORT ?? 2525),
-    user: process.env.MAILTRAP_USER ?? "",
-    pass: process.env.MAILTRAP_PASS ?? "",
+    user,
+    pass,
     fromName: process.env.MAIL_FROM_NAME ?? "Expense Tracker",
     fromEmail: process.env.MAIL_FROM_EMAIL ?? "no-reply@expense-tracker.local",
   };
@@ -30,7 +38,8 @@ function createTransporter() {
     host,
     port,
     secure: port === 465,
-    auth: user ? { user, pass } : undefined,
+    tls: { rejectUnauthorized: false },
+    auth: { user, pass },
   });
 }
 
