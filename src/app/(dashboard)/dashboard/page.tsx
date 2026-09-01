@@ -11,6 +11,15 @@ import { translate, translateCategory } from "@/lib/i18n";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { FadeIn } from "@/components/ui/FadeIn";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: translate(locale, "seo.dashboardTitle"),
+    description: translate(locale, "seo.dashboardDescription"),
+  };
+}
 
 export default async function DashboardPage() {
   const user = await requireUser();

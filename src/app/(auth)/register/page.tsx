@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { getLocale } from "@/lib/locale";
 import { translate } from "@/lib/i18n";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: translate(locale, "seo.registerTitle"),
+    description: translate(locale, "seo.registerDescription"),
+  };
+}
 
 export default async function RegisterPage() {
   const locale = await getLocale();

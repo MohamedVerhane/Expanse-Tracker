@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { requireUser } from "@/lib/session";
 import { getExpenses, getCategories } from "@/lib/expenses";
 import { ExpensesToolbar } from "@/components/expenses/ExpensesToolbar";
@@ -5,6 +6,14 @@ import { ExpenseTable } from "@/components/expenses/ExpenseTable";
 import type { ExpenseFilters, SortField, SortOrder } from "@/types";
 import { getLocale } from "@/lib/locale";
 import { translate } from "@/lib/i18n";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: translate(locale, "seo.expensesTitle"),
+    description: translate(locale, "seo.expensesDescription"),
+  };
+}
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
