@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { createSession, destroySession, verifyPassword, hashPassword } from "@/lib/auth";
 import { registerSchema, loginSchema } from "@/lib/validation";
+import { createVerificationToken } from "@/lib/verification";
+import { sendVerificationEmail } from "@/lib/mail";
+import { getLocale } from "@/lib/locale";
 import { redirect } from "next/navigation";
 
 export type AuthState = {
@@ -31,8 +34,17 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
   const hashed = await hashPassword(password);
   const user = await prisma.user.create({ data: { name, email, password: hashed } });
 
-  await createSession({ userId: user.id, email: user.email });
-  redirect("/dashboard");
+  let rawToken: string;
+  try {
+    rawToken = await createVerificationToken(user.id);
+    await sendVerificationEmail(email, rawToken, await getLocale());
+  } catch (error) {
+    console.error("Failed to send verification email:", error);
+    await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
+    return { error: "We couldn't send the verification email. Please try again later." };
+  }
+
+  redirect(`/verify-email?email=${encodeURIComponent(email)}`);
 }
 
 export async function loginAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -57,8 +69,45 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     return { error: "Invalid email or password." };
   }
 
+  if (!user.emailVerifiedAt) {
+    redirect(`/verify-email?email=${encodeURIComponent(user.email)}`);
+  }
+
   await createSession({ userId: user.id, email: user.email });
   redirect("/dashboard");
+}
+
+export type ResendState = {
+  ok?: boolean;
+  error?: string;
+};
+
+export async function resendVerificationAction(
+  _prev: ResendState,
+  formData: FormData,
+): Promise<ResendState> {
+  const parsed = loginSchema.shape.email.safeParse(formData.get("email"));
+  if (!parsed.success) {
+    return { ok: false, error: "Enter a valid email address." };
+  }
+
+  const user = await prisma.user.findUnique({ where: { email: parsed.data } });
+  if (!user) {
+    return { ok: false, error: "No account found with this email address." };
+  }
+  if (user.emailVerifiedAt) {
+    return { ok: false, error: "This email address is already verified." };
+  }
+
+  try {
+    const rawToken = await createVerificationToken(user.id);
+    await sendVerificationEmail(user.email, rawToken, await getLocale());
+  } catch (error) {
+    console.error("Failed to resend verification email:", error);
+    return { ok: false, error: "We couldn't send the email. Please try again later." };
+  }
+
+  return { ok: true };
 }
 
 export async function logoutAction(): Promise<void> {

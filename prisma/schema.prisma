@@ -8,15 +8,29 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid()) @db.VarChar(36)
-  name      String
-  email     String    @unique
-  password  String
-  expenses  Expense[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                 String               @id @default(cuid()) @db.VarChar(36)
+  name               String
+  email              String               @unique
+  password           String
+  emailVerifiedAt    DateTime?
+  verificationTokens VerificationToken[]
+  expenses           Expense[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
   @@index([email])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid()) @db.VarChar(36)
+  token     String   @unique @db.VarChar(64)
+  userId    String   @db.VarChar(36)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
 }
 
 model Expense {
