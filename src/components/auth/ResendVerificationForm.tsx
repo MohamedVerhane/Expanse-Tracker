@@ -28,6 +28,7 @@ export function ResendVerificationForm({ initialEmail }: { initialEmail?: string
           {state.error}
         </p>
       )}
+      {state.detail && <p className="text-xs text-red-500/80" role="alert">{state.detail}</p>}
       {state.ok && (
         <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400" role="status">
           {t("verify.sent")}

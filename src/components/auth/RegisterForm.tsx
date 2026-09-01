@@ -31,6 +31,7 @@ export function RegisterForm() {
           {state.error}
         </p>
       )}
+      {state.detail && <p className="text-xs text-red-500/80" role="alert">{state.detail}</p>}
       <div>
         <Label htmlFor="name">{t("form.name")}</Label>
         <div className="relative">

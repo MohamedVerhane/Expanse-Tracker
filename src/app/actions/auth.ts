@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 export type AuthState = {
   error?: string;
   fieldErrors?: Record<string, string>;
+  detail?: string;
 };
 
 export async function registerAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -39,11 +40,13 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
     rawToken = await createVerificationToken(user.id);
     await sendVerificationEmail(email, rawToken, await getLocale());
   } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
     console.error("Failed to send verification email:", error);
     await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
     return {
       error:
         "We couldn't send the verification email. Make sure the email service is configured correctly, then try again.",
+      detail,
     };
   }
 
@@ -83,6 +86,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
 export type ResendState = {
   ok?: boolean;
   error?: string;
+  detail?: string;
 };
 
 export async function resendVerificationAction(
@@ -107,7 +111,11 @@ export async function resendVerificationAction(
     await sendVerificationEmail(user.email, rawToken, await getLocale());
   } catch (error) {
     console.error("Failed to resend verification email:", error);
-    return { ok: false, error: "We couldn't send the email. Please try again later." };
+    return {
+      ok: false,
+      error: "We couldn't send the email. Please try again later.",
+      detail: error instanceof Error ? error.message : String(error),
+    };
   }
 
   return { ok: true };
