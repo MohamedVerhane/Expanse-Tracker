@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const PUBLIC_PATHS = ["/login", "/register", "/verify-email"];
+const AUTH_ONLY_PATHS = ["/login", "/register"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -25,7 +26,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isValid && isPublic) {
+  if (isValid && AUTH_ONLY_PATHS.some((p) => pathname.startsWith(p))) {
     const url = new URL("/dashboard", request.url);
     return NextResponse.redirect(url);
   }
