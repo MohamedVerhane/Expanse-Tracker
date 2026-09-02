@@ -59,17 +59,15 @@ export default async function VerifyEmailPage({
     redirect("/dashboard");
   }
 
-  if (token || error) {
-    const messageKey = result?.status === "expired" ? "verify.expired" : result?.status === "invalid" ? "verify.invalid" : null;
+  if (result?.status === "invalid" || result?.status === "expired") {
+    redirect("/login");
+  }
 
+  if (error) {
     return (
       <div className="space-y-4">
         <h1 className="text-xl font-semibold">{t("verify.title")}</h1>
-        {error ? (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>
-        ) : messageKey ? (
-          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">{t(messageKey)}</p>
-        ) : null}
+        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>
         <p className="text-sm text-muted">{t("verify.enterEmail")}</p>
         <ResendVerificationForm initialEmail={email} />
         <p className="text-center text-sm text-muted">
