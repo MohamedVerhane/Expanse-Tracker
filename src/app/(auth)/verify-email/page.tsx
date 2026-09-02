@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ResendVerificationForm } from "@/components/auth/ResendVerificationForm";
-import { verifyVerificationToken } from "@/lib/verification";
+import { verifyVerificationToken, type VerifyResult } from "@/lib/verification";
 import { prismaTokenStore } from "@/lib/verify-store";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
@@ -21,6 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: translate(locale, "verify.title") };
 }
 
+async function resolveToken(token: string): Promise<VerifyResult> {
+  return verifyVerificationToken(
+    token,
+    prismaTokenStore,
+    (userId) => prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } }),
+  );
+}
+
 export default async function VerifyEmailPage({
   searchParams,
 }: {
@@ -33,22 +41,35 @@ export default async function VerifyEmailPage({
   const token = str(params.token);
   const email = str(params.email);
 
+  let result: VerifyResult | null = null;
+  let error: string | null = null;
+
   if (token) {
-    const result = await verifyVerificationToken(
-      token,
-      prismaTokenStore,
-      (userId) => prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } }),
-    );
-    if (result.status === "ok") {
-      await prisma.user.update({ where: { id: result.userId }, data: { emailVerifiedAt: new Date() } });
-      await createSession({ userId: result.userId, email: result.email });
-      redirect("/dashboard");
+    try {
+      result = await resolveToken(token);
+    } catch (e) {
+      console.error("Email verification failed:", e);
+      error = e instanceof Error ? e.message : "Verification failed. Please try again.";
     }
-    const messageKey = result.status === "expired" ? "verify.expired" : "verify.invalid";
+  }
+
+  if (result?.status === "ok") {
+    await prisma.user.update({ where: { id: result.userId }, data: { emailVerifiedAt: new Date() } });
+    await createSession({ userId: result.userId, email: result.email });
+    redirect("/dashboard");
+  }
+
+  if (token || error) {
+    const messageKey = result?.status === "expired" ? "verify.expired" : result?.status === "invalid" ? "verify.invalid" : null;
+
     return (
       <div className="space-y-4">
         <h1 className="text-xl font-semibold">{t("verify.title")}</h1>
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">{t(messageKey)}</p>
+        {error ? (
+          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>
+        ) : messageKey ? (
+          <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">{t(messageKey)}</p>
+        ) : null}
         <p className="text-sm text-muted">{t("verify.enterEmail")}</p>
         <ResendVerificationForm initialEmail={email} />
         <p className="text-center text-sm text-muted">
