@@ -21,14 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: translate(locale, "verify.title") };
 }
 
-async function resolveToken(token: string): Promise<VerifyResult> {
-  return verifyVerificationToken(
-    token,
-    prismaTokenStore,
-    (userId) => prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } }),
-  );
-}
-
 export default async function VerifyEmailPage({
   searchParams,
 }: {
@@ -46,22 +38,24 @@ export default async function VerifyEmailPage({
 
   if (token) {
     try {
-      result = await resolveToken(token);
+      result = await verifyVerificationToken(
+        token,
+        prismaTokenStore,
+        (userId) => prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } }),
+      );
+
+      if (result.status === "ok") {
+        await prisma.user.update({ where: { id: result.userId }, data: { emailVerifiedAt: new Date() } });
+        await createSession({ userId: result.userId, email: result.email });
+      }
     } catch (e) {
       console.error("Email verification failed:", e);
       error = e instanceof Error ? e.message : "Verification failed. Please try again.";
     }
   }
 
-  if (result?.status === "ok") {
-    await prisma.user.update({ where: { id: result.userId }, data: { emailVerifiedAt: new Date() } });
-    await createSession({ userId: result.userId, email: result.email });
-    redirect("/dashboard");
-  }
-
-  if (result?.status === "invalid" || result?.status === "expired") {
-    redirect("/login");
-  }
+  if (result?.status === "ok") redirect("/dashboard");
+  if (result?.status === "invalid" || result?.status === "expired") redirect("/login");
 
   if (error) {
     return (
