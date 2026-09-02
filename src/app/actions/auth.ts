@@ -12,6 +12,7 @@ import { redirect } from "next/navigation";
 export type AuthState = {
   error?: string;
   fieldErrors?: Record<string, string>;
+  detail?: string;
 };
 
 export async function registerAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -39,10 +40,12 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
     const rawToken = await createVerificationToken(user.id, prismaTokenStore);
     await sendVerificationEmail({ to: email, token: rawToken, locale: await getLocale() });
   } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
     console.error("Failed to send verification email:", error);
     await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
     return {
       error: "We couldn't send the verification email. Make sure the email service is configured correctly, then try again.",
+      detail,
     };
   }
 
