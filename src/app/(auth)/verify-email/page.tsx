@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ResendVerificationForm } from "@/components/auth/ResendVerificationForm";
-import { verifyEmailToken } from "@/lib/verification";
+import { verifyVerificationToken } from "@/lib/verification";
+import { prismaTokenStore } from "@/lib/verify-store";
+import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/auth";
 import { getLocale } from "@/lib/locale";
 import { translate } from "@/lib/i18n";
@@ -16,9 +18,7 @@ function str(value: string | string[] | undefined): string | undefined {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
-  return {
-    title: translate(locale, "app.title"),
-  };
+  return { title: translate(locale, "verify.title") };
 }
 
 export default async function VerifyEmailPage({
@@ -34,9 +34,14 @@ export default async function VerifyEmailPage({
   const email = str(params.email);
 
   if (token) {
-    const result = await verifyEmailToken(token);
+    const result = await verifyVerificationToken(
+      token,
+      prismaTokenStore,
+      (userId) => prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true } }),
+    );
     if (result.status === "ok") {
-      await createSession({ userId: result.user.id, email: result.user.email });
+      await prisma.user.update({ where: { id: result.userId }, data: { emailVerifiedAt: new Date() } });
+      await createSession({ userId: result.userId, email: result.email });
       redirect("/dashboard");
     }
     const messageKey = result.status === "expired" ? "verify.expired" : "verify.invalid";

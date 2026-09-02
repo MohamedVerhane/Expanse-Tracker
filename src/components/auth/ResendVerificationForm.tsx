@@ -1,25 +1,20 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { resendVerificationAction, type ResendState } from "@/app/actions/auth";
-import { useTranslations } from "@/components/locale-provider";
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  const { t } = useTranslations();
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <Button type="submit" variant="secondary" className="w-full" disabled={pending}>
-      {pending ? t("verify.resending") : t("verify.resend")}
+      {pending ? "Resending..." : "Resend email"}
     </Button>
   );
 }
 
 export function ResendVerificationForm({ initialEmail }: { initialEmail?: string }) {
-  const [state, formAction] = useActionState<ResendState, FormData>(resendVerificationAction, {});
-  const { t } = useTranslations();
+  const [state, formAction, isPending] = useActionState<ResendState, FormData>(resendVerificationAction, {});
 
   return (
     <form action={formAction} className="space-y-4">
@@ -28,14 +23,18 @@ export function ResendVerificationForm({ initialEmail }: { initialEmail?: string
           {state.error}
         </p>
       )}
-      {state.detail && <p className="text-xs text-red-500/80" role="alert">{state.detail}</p>}
+      {state.cooldownMs && state.cooldownMs > 0 && (
+        <p className="text-xs text-muted" role="status">
+          Retry in {Math.ceil(state.cooldownMs / 1000)}s
+        </p>
+      )}
       {state.ok && (
         <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400" role="status">
-          {t("verify.sent")}
+          Verification email sent. Check your inbox.
         </p>
       )}
       <div>
-        <Label htmlFor="resend-email">{t("form.email")}</Label>
+        <Label htmlFor="resend-email">Email</Label>
         <Input
           id="resend-email"
           name="email"
@@ -46,7 +45,7 @@ export function ResendVerificationForm({ initialEmail }: { initialEmail?: string
           defaultValue={initialEmail ?? ""}
         />
       </div>
-      <SubmitButton />
+      <SubmitButton pending={isPending} />
     </form>
   );
 }

@@ -26,5 +26,8 @@ export async function requireUser() {
   if (!user) {
     throw new Error("UNAUTHORIZED");
   }
+  if (!user.emailVerifiedAt) {
+    throw new Error("EMAIL_NOT_VERIFIED");
+  }
   return user;
 }

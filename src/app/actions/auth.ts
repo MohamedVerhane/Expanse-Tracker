@@ -3,7 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { createSession, destroySession, verifyPassword, hashPassword } from "@/lib/auth";
 import { registerSchema, loginSchema } from "@/lib/validation";
-import { createVerificationToken } from "@/lib/verification";
+import { createVerificationToken, RESEND_COOLDOWN_MS } from "@/lib/verification";
+import { prismaTokenStore } from "@/lib/verify-store";
 import { sendVerificationEmail } from "@/lib/mail";
 import { getLocale } from "@/lib/locale";
 import { redirect } from "next/navigation";
@@ -11,7 +12,6 @@ import { redirect } from "next/navigation";
 export type AuthState = {
   error?: string;
   fieldErrors?: Record<string, string>;
-  detail?: string;
 };
 
 export async function registerAction(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -35,21 +35,18 @@ export async function registerAction(_prev: AuthState, formData: FormData): Prom
   const hashed = await hashPassword(password);
   const user = await prisma.user.create({ data: { name, email, password: hashed } });
 
-  let rawToken: string;
   try {
-    rawToken = await createVerificationToken(user.id);
-    await sendVerificationEmail(email, rawToken, await getLocale());
+    const rawToken = await createVerificationToken(user.id, prismaTokenStore);
+    await sendVerificationEmail({ to: email, token: rawToken, locale: await getLocale() });
   } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
     console.error("Failed to send verification email:", error);
     await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
     return {
-      error:
-        "We couldn't send the verification email. Make sure the email service is configured correctly, then try again.",
-      detail,
+      error: "We couldn't send the verification email. Make sure the email service is configured correctly, then try again.",
     };
   }
 
+  await createSession({ userId: user.id, email: user.email });
   redirect(`/verify-email?email=${encodeURIComponent(email)}`);
 }
 
@@ -75,18 +72,17 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     return { error: "Invalid email or password." };
   }
 
+  await createSession({ userId: user.id, email: user.email });
   if (!user.emailVerifiedAt) {
     redirect(`/verify-email?email=${encodeURIComponent(user.email)}`);
   }
-
-  await createSession({ userId: user.id, email: user.email });
   redirect("/dashboard");
 }
 
 export type ResendState = {
   ok?: boolean;
   error?: string;
-  detail?: string;
+  cooldownMs?: number;
 };
 
 export async function resendVerificationAction(
@@ -106,16 +102,20 @@ export async function resendVerificationAction(
     return { ok: false, error: "This email address is already verified." };
   }
 
+  const last = await prismaTokenStore.findLatestByUserId(user.id);
+  if (last) {
+    const remaining = last.createdAt.getTime() + RESEND_COOLDOWN_MS - Date.now();
+    if (remaining > 0) {
+      return { ok: false, error: "Please wait before requesting another email.", cooldownMs: remaining };
+    }
+  }
+
   try {
-    const rawToken = await createVerificationToken(user.id);
-    await sendVerificationEmail(user.email, rawToken, await getLocale());
+    const rawToken = await createVerificationToken(user.id, prismaTokenStore);
+    await sendVerificationEmail({ to: user.email, token: rawToken, locale: await getLocale() });
   } catch (error) {
     console.error("Failed to resend verification email:", error);
-    return {
-      ok: false,
-      error: "We couldn't send the email. Please try again later.",
-      detail: error instanceof Error ? error.message : String(error),
-    };
+    return { ok: false, error: "We couldn't send the email. Please try again later." };
   }
 
   return { ok: true };
