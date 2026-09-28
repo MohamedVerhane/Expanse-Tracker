@@ -80,6 +80,80 @@ DATABASE_URL="file:./data/expenses.db"
 To start over from an empty database, delete the file and re-run
 `npm run db:migrate && npm run db:seed`.
 
+## Deployment
+
+SQLite is a file on disk, so the app needs a **long-lived Node.js server with a
+persistent volume**. It must run as a **single instance** — replicas cannot
+share the same database file.
+
+> **Not compatible with Vercel.** Serverless functions have a read-only
+> filesystem with only ephemeral `/tmp` scratch space, so every write would be
+> discarded. See Vercel's own note:
+> [Is SQLite supported in Vercel?](https://vercel.com/kb/guide/is-sqlite-supported-in-vercel).
+> If you need Vercel, use a hosted database instead (for example
+> [Turso/libSQL](https://turso.tech), which is SQLite-compatible and has a free
+> tier).
+
+### Required environment variables
+
+Set these on the host. Do not commit a `.env` file.
+
+| Variable           | Value                                              |
+| ------------------ | -------------------------------------------------- |
+| `DATABASE_URL`     | `file:/data/expense-tracker.db` — on the volume    |
+| `AUTH_SECRET`      | Long random string, min 16 chars                   |
+| `SMTP_*`           | Only if you use email verification                 |
+| `MAIL_FROM_*`      | Only if you use email verification                 |
+
+Generate a secret with `openssl rand -base64 32`.
+
+The default categories are inserted automatically the first time they are
+needed, so there is no seeding step in production.
+
+### Build and start commands
+
+Migrations deliberately run at **start**, not at build: the database only
+exists on the runtime host, once the volume is attached.
+
+| Step    | Command                |
+| ------- | ---------------------- |
+| Install | `npm ci`               |
+| Build   | `npm run build`        |
+| Start   | `npm run db:deploy && npm run start` |
+
+### Docker
+
+The included `Dockerfile` follows exactly that order and defaults
+`DATABASE_URL` to `file:/data/expense-tracker.db`, so mount a volume at
+`/data`:
+
+```bash
+docker build -t expense-tracker .
+docker run -p 3000:3000 \
+  -v expense-data:/data \
+  -e AUTH_SECRET="$(openssl rand -base64 32)" \
+  expense-tracker
+```
+
+No C++ toolchain is needed in the image: `better-sqlite3` ships prebuilt
+binaries, and `package.json` denies its install script so `npm ci` never tries
+to compile it.
+
+### Platform settings
+
+For a platform that builds from the repository without Docker, use:
+
+- **Build command:** `npm ci && npm run build`
+- **Start command:** `npm run db:deploy && npm run start`
+- **Volume:** a persistent disk mounted at `/data`
+
+This maps directly onto Railway, Render (a "Disk"), Fly.io (a `volume` on the
+service) or a plain VPS. On a VPS you can skip Docker entirely and use
+`systemd` or `pm2` to run `npm run db:deploy && npm run start`.
+
+Put a reverse proxy such as nginx or Caddy in front of the app for TLS and
+request limits.
+
 ## Scripts
 
 | Script               | Description                                  |
@@ -88,10 +162,13 @@ To start over from an empty database, delete the file and re-run
 | `npm run build`      | Build for production                         |
 | `npm run start`      | Run the production build                     |
 | `npm run lint`       | Lint with ESLint                             |
-| `npm run db:migrate` | Apply Prisma migrations                      |
+| `npm run test`       | Run the verification tests                   |
+| `npm run db:migrate` | Create/apply a migration in development       |
+| `npm run db:deploy`  | Apply pending migrations (production)         |
 | `npm run db:push`    | Push schema to the database (no migration)   |
 | `npm run db:seed`    | Seed default categories (production data)    |
 | `npm run db:seed:demo` | Seed demo users + sample expenses (dev only) |
+| `npm run db:reset`   | Drop, re-migrate and re-seed the database     |
 
 ## Demo data
 
