@@ -1,17 +1,31 @@
 import "dotenv/config";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { PrismaClient } from "../../generated/prisma/client";
-import { ensureDatabaseDirectory, resolveDatabaseUrl } from "./db-url";
+import {
+  ensureDatabaseDirectory,
+  isRemoteDatabaseUrl,
+  resolveDatabaseUrl,
+} from "./db-url";
 import { DEFAULT_CATEGORIES } from "./constants";
 
 const prismaClientSingleton = () => {
   const url = resolveDatabaseUrl();
 
+  if (isRemoteDatabaseUrl(url)) {
+    // Hosted libSQL (Turso): the data lives outside this process, so the app
+    // works on hosts with a read-only and ephemeral filesystem such as Vercel.
+    return new PrismaClient({
+      adapter: new PrismaLibSql({
+        url,
+        authToken: process.env.DATABASE_AUTH_TOKEN,
+      }),
+    });
+  }
+
   ensureDatabaseDirectory(url);
 
-  const adapter = new PrismaBetterSqlite3({ url });
-
-  return new PrismaClient({ adapter });
+  return new PrismaClient({ adapter: new PrismaBetterSqlite3({ url }) });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

@@ -66,12 +66,20 @@ A full-stack personal expense tracker built with Next.js. Track your spending, f
 
 ## Database
 
-The whole database lives in a single file, `prisma/dev.db` by default. It is
-created and migrated by Prisma, and it is listed in `.gitignore`.
+The app uses SQLite. There are two ways to store it, chosen with the same
+`DATABASE_URL` variable:
 
-To point at a different location, change `DATABASE_URL` to another `file:`
-path. Relative paths are resolved against the project root, so the Prisma CLI
-and the Next.js server always open the same file:
+| `DATABASE_URL`                 | Where the data lives         | Use for                      |
+| ------------------------------ | ---------------------------- | ---------------------------- |
+| `file:./prisma/dev.db`         | A local file in the project  | Local development            |
+| `libsql://your-db.turso.io`    | Hosted libSQL (Turso)        | Vercel and other serverless  |
+
+### Local file (development)
+
+The database is a single file, `prisma/dev.db` by default, created and migrated
+by Prisma and listed in `.gitignore`. Relative paths are resolved against the
+project root, so the Prisma CLI and the Next.js server always open the same
+file:
 
 ```ini
 DATABASE_URL="file:./data/expenses.db"
@@ -82,50 +90,71 @@ To start over from an empty database, delete the file and re-run
 
 ## Deployment
 
-SQLite is a file on disk, so the app needs a **long-lived Node.js server with a
-persistent volume**. It must run as a **single instance** — replicas cannot
-share the same database file.
+There are two supported targets. Pick one.
 
-> **Not compatible with Vercel.** Serverless functions have a read-only
-> filesystem with only ephemeral `/tmp` scratch space, so every write would be
-> discarded. See Vercel's own note:
-> [Is SQLite supported in Vercel?](https://vercel.com/kb/guide/is-sqlite-supported-in-vercel).
-> If you need Vercel, use a hosted database instead (for example
-> [Turso/libSQL](https://turso.tech), which is SQLite-compatible and has a free
-> tier).
+### Option A — Vercel with hosted libSQL (Turso)
 
-### Required environment variables
+Vercel cannot run a local SQLite file: serverless functions have a read-only
+filesystem with only ephemeral `/tmp` scratch space, so every write is discarded
+(see [Vercel's own note](https://vercel.com/kb/guide/is-sqlite-supported-in-vercel)).
+The fix is to keep SQLite but move the *file* off the server, with
+[Turso/libSQL](https://turso.tech), which is a hosted SQLite-compatible database
+with a free tier. The code change is one driver adapter, already in place.
 
-Set these on the host. Do not commit a `.env` file.
+1. Create the database and a token:
 
-| Variable           | Value                                              |
-| ------------------ | -------------------------------------------------- |
-| `DATABASE_URL`     | `file:/data/expense-tracker.db` — on the volume    |
-| `AUTH_SECRET`      | Long random string, min 16 chars                   |
-| `SMTP_*`           | Only if you use email verification                 |
-| `MAIL_FROM_*`      | Only if you use email verification                 |
+   ```bash
+   npm i -g @turso/cli
+   turso db create expense-tracker
+   turso db tokens create expense-tracker-app
+   ```
 
-Generate a secret with `openssl rand -base64 32`.
+2. Apply the schema. Prisma Migrate cannot talk to libSQL, so use the included
+   runner, which applies the same migration files and records them in
+   `_prisma_migrations`:
 
-The default categories are inserted automatically the first time they are
-needed, so there is no seeding step in production.
+   ```bash
+   DATABASE_URL="libsql://your-db.turso.io" \
+   DATABASE_AUTH_TOKEN="<token>" \
+   npm run db:deploy
+   ```
 
-### Build and start commands
+   It is idempotent: re-running applies only the migrations still missing.
 
-Migrations deliberately run at **start**, not at build: the database only
-exists on the runtime host, once the volume is attached.
+3. Set the same two variables in the Vercel project's environment settings,
+   then deploy. Vercel's defaults already match the project — install `npm ci`,
+   build `npm run build`, start `npm run start`.
 
-| Step    | Command                |
-| ------- | ---------------------- |
-| Install | `npm ci`               |
-| Build   | `npm run build`        |
-| Start   | `npm run db:deploy && npm run start` |
+Do **not** put migrations in the Vercel start command. They must run once from
+a machine that holds the auth token, not on every cold start.
 
-### Docker
+### Option B — Your own server with a persistent volume
+
+Use a **long-lived Node.js server with a persistent volume**, running as a
+**single instance** — replicas cannot share the same database file.
+
+| Variable       | Value                                           |
+| -------------- | ----------------------------------------------- |
+| `DATABASE_URL` | `file:/data/expense-tracker.db` — on the volume |
+| `AUTH_SECRET`  | Long random string, min 16 chars                |
+| `SMTP_*`       | Only if you use email verification              |
+| `MAIL_FROM_*`  | Only if you use email verification              |
+
+Generate a secret with `openssl rand -base64 32`. The default categories are
+inserted automatically the first time they are needed, so there is no seeding
+step in production.
+
+Migrations deliberately run at **start**, not at build: the database only exists
+on the runtime host, once the volume is attached.
+
+| Step    | Command                                       |
+| ------- | --------------------------------------------- |
+| Install | `npm ci`                                      |
+| Build   | `npm run build`                               |
+| Start   | `npm run db:deploy && npm run start`          |
 
 The included `Dockerfile` follows exactly that order and defaults
-`DATABASE_URL` to `file:/data/expense-tracker.db`, so mount a volume at
-`/data`:
+`DATABASE_URL` to `file:/data/expense-tracker.db`, so mount a volume at `/data`:
 
 ```bash
 docker build -t expense-tracker .
@@ -139,20 +168,32 @@ No C++ toolchain is needed in the image: `better-sqlite3` ships prebuilt
 binaries, and `package.json` denies its install script so `npm ci` never tries
 to compile it.
 
-### Platform settings
-
-For a platform that builds from the repository without Docker, use:
+For a platform that builds from the repository without Docker:
 
 - **Build command:** `npm ci && npm run build`
 - **Start command:** `npm run db:deploy && npm run start`
 - **Volume:** a persistent disk mounted at `/data`
 
 This maps directly onto Railway, Render (a "Disk"), Fly.io (a `volume` on the
-service) or a plain VPS. On a VPS you can skip Docker entirely and use
-`systemd` or `pm2` to run `npm run db:deploy && npm run start`.
+service) or a plain VPS. On a VPS you can skip Docker entirely and use `systemd`
+or `pm3` to run `npm run db:deploy && npm run start`.
 
 Put a reverse proxy such as nginx or Caddy in front of the app for TLS and
 request limits.
+
+### Diagnosing database problems
+
+The server logs one line at startup and one line per failed request:
+
+```text
+[db] DATABASE_URL resolved to: libsql://your-db.turso.io
+[db] Using hosted libSQL over HTTP
+[db] Connection OK. 8 categories.
+[error] GET /dashboard digest=339248097
+```
+
+The `Reference:` code shown on the error page matches the `digest=` in the log,
+which is how you find the real error for a request the user reported.
 
 ## Scripts
 

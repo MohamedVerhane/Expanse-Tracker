@@ -27,22 +27,32 @@ function sqliteFilePath(url: string): string | null {
   return url.slice("file:".length);
 }
 
-/** The absolute `file:` URL for the SQLite database. */
+/** Remote libSQL/Turso URLs, which are served over the network. */
+export function isRemoteDatabaseUrl(url: string): boolean {
+  return (
+    url.startsWith("libsql://") ||
+    url.startsWith("https://") ||
+    url.startsWith("wss://")
+  );
+}
+
+/** The database URL for the SQLite dialect: local `file:` or remote libSQL. */
 export function resolveDatabaseUrl(): string {
   const url = process.env.DATABASE_URL?.trim() || DEFAULT_DATABASE_URL;
 
   if (url === "file::memory:") return url;
+  if (isRemoteDatabaseUrl(url)) return url;
 
   if (!url.startsWith("file:")) {
     // Without this the driver would treat e.g. "mysql://user:pass@host/db" as a
     // literal filename and fail much later with a confusing error.
     throw new Error(
-      `DATABASE_URL must be a SQLite "file:" URL, but got: ${url}\n` +
-        `This app uses SQLite, which stores everything in a single local file.\n` +
-        `Set DATABASE_URL="file:./prisma/dev.db" (or an absolute path on a ` +
-        `persistent volume, e.g. "file:/data/expense-tracker.db").\n` +
-        `Note: SQLite cannot run on Vercel or any other serverless host, ` +
-        `because the filesystem is read-only and discarded after each request.`,
+      `DATABASE_URL must be a SQLite "file:" URL or a libSQL "libsql://" URL, but got: ${url}\n` +
+        `This app uses SQLite. For a local database or a single server with a ` +
+        `persistent volume, set DATABASE_URL="file:./prisma/dev.db" ` +
+        `(e.g. "file:/data/expense-tracker.db").\n` +
+        `For serverless hosting such as Vercel, use a hosted libSQL database: ` +
+        `DATABASE_URL="libsql://your-db.turso.io" plus DATABASE_AUTH_TOKEN.`,
     );
   }
 

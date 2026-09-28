@@ -1,19 +1,30 @@
 import { promises as fs } from "node:fs";
 import { dirname, join } from "node:path";
-import { databaseFilePath, resolveDatabaseUrl } from "./lib/db-url";
+import {
+  databaseFilePath,
+  isRemoteDatabaseUrl,
+  resolveDatabaseUrl,
+} from "./lib/db-url";
 
 /**
  * Runs once when the Node.js server starts.
  *
- * Verifies the SQLite file is reachable and that its directory is actually
- * writable, and reports both to the server log. On a serverless host the
- * read succeeds while every write is silently discarded, which is much harder
- * to diagnose than a hard failure.
+ * Verifies the database is reachable and, for a local file, that its directory
+ * is actually writable. On a serverless host the read succeeds while every write
+ * is silently discarded, which is much harder to diagnose than a hard failure.
  */
 export async function register() {
   const url = resolveDatabaseUrl();
   const file = databaseFilePath(url);
+  const remote = isRemoteDatabaseUrl(url);
+
   console.log(`[db] DATABASE_URL resolved to: ${url}`);
+  console.log(
+    remote
+      ? "[db] Using hosted libSQL over HTTP" +
+          (process.env.DATABASE_AUTH_TOKEN ? "" : " (DATABASE_AUTH_TOKEN is MISSING)")
+      : `[db] Using a local SQLite file at ${file}`,
+  );
 
   try {
     const { prisma } = await import("./lib/prisma");
