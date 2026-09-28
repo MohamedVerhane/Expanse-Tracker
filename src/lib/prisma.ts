@@ -1,32 +1,20 @@
 import "dotenv/config";
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../../generated/prisma/client";
+import { ensureDatabaseDirectory, resolveDatabaseUrl } from "./db-url";
 import { DEFAULT_CATEGORIES } from "./constants";
 
 const prismaClientSingleton = () => {
-  const databaseName = process.env.DATABASE_NAME ?? getDbName(process.env.DATABASE_URL);
+  const url = resolveDatabaseUrl();
 
-  const connectionConfig =
-    process.env.DATABASE_URL ??
-    `mysql://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${databaseName}`;
+  ensureDatabaseDirectory(url);
 
-  const adapter = new PrismaMariaDb(connectionConfig, {
-    database: databaseName,
-  });
+  const adapter = new PrismaBetterSqlite3({ url });
 
   return new PrismaClient({ adapter });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;
-
-function getDbName(url?: string): string {
-  if (!url) return "defaultdb";
-  try {
-    return new URL(url).pathname.replace(/^\//, "") || "defaultdb";
-  } catch {
-    return "defaultdb";
-  }
-}
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClientSingleton | undefined;

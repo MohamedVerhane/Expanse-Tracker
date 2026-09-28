@@ -17,9 +17,10 @@
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/react-fontawesome": "^3.5.0",
-    "@prisma/adapter-mariadb": "^7.10.0",
+    "@prisma/adapter-better-sqlite3": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
     "dotenv": "^17.4.2",
     "framer-motion": "^13.1.1",
     "jose": "^6.2.10",
@@ -32,6 +33,9 @@
     "server-only": "^0.0.1",
     "sonner": "^2.0.8",
     "zod": "^4.5.1"
+  },
+  "overrides": {
+    "better-sqlite3": "^13.0.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

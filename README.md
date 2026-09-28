@@ -16,7 +16,7 @@ A full-stack personal expense tracker built with Next.js. Track your spending, f
 
 - [Next.js](https://nextjs.org) (App Router) + React + TypeScript
 - [Tailwind CSS](https://tailwindcss.com) v4
-- MySQL via [Prisma](https://www.prisma.io) ORM
+- SQLite via [Prisma](https://www.prisma.io) ORM — embedded file database, no server required
 - Auth: [jose](https://github.com/panva/jose) (JWT) + [bcryptjs](https://github.com/dcodeIO/bcrypt.js) + [zod](https://github.com/colinhacks/zod)
 - Charts: [Recharts](https://recharts.org)
 - Theme: [next-themes](https://github.com/pacocoursey/next-themes), toasts via [sonner](https://sonner.emilkowal.ski)
@@ -25,7 +25,8 @@ A full-stack personal expense tracker built with Next.js. Track your spending, f
 ## Requirements
 
 - Node.js 18+ (Node 20+ recommended)
-- A MySQL database (e.g. via WAMP, XAMPP, or Docker)
+- Nothing else — the database is a local SQLite file, so there is no database
+  server to install or run
 
 ## Getting started
 
@@ -38,10 +39,13 @@ A full-stack personal expense tracker built with Next.js. Track your spending, f
 2. Create a `.env` file (see `.env.example`):
 
    ```ini
-   DATABASE_URL="mysql://root:@localhost:3306/expense_tracker"
-   DATABASE_PASSWORD=""
+   DATABASE_URL="file:./prisma/dev.db"
    AUTH_SECRET="replace-with-a-long-random-string"
    ```
+
+   > `DATABASE_URL` points at the SQLite file, relative to the project root. The
+   > database is created automatically on the first migration, so the file does
+   > not need to exist yet.
 
    > `AUTH_SECRET` should be at least 16 characters. Generate one with `openssl rand -base64 32`.
 
@@ -59,6 +63,22 @@ A full-stack personal expense tracker built with Next.js. Track your spending, f
    ```
 
    Open http://localhost:3000 and create an account.
+
+## Database
+
+The whole database lives in a single file, `prisma/dev.db` by default. It is
+created and migrated by Prisma, and it is listed in `.gitignore`.
+
+To point at a different location, change `DATABASE_URL` to another `file:`
+path. Relative paths are resolved against the project root, so the Prisma CLI
+and the Next.js server always open the same file:
+
+```ini
+DATABASE_URL="file:./data/expenses.db"
+```
+
+To start over from an empty database, delete the file and re-run
+`npm run db:migrate && npm run db:seed`.
 
 ## Scripts
 
