@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import {
   databaseFilePath,
   isRemoteDatabaseUrl,
+  redactDatabaseUrl,
   resolveDatabaseUrl,
 } from "./lib/db-url";
 
@@ -14,11 +15,22 @@ import {
  * is silently discarded, which is much harder to diagnose than a hard failure.
  */
 export async function register() {
+  // Nothing here may throw: a failing instrumentation hook stops the whole
+  // server from starting, which would leave no way to report the very problem
+  // this function exists to report.
+  try {
+    await checkDatabase();
+  } catch (error) {
+    console.error("[db] Startup check failed:", error);
+  }
+}
+
+async function checkDatabase(): Promise<void> {
   const url = resolveDatabaseUrl();
   const file = databaseFilePath(url);
   const remote = isRemoteDatabaseUrl(url);
 
-  console.log(`[db] DATABASE_URL resolved to: ${url}`);
+  console.log(`[db] DATABASE_URL resolved to: ${redactDatabaseUrl(url)}`);
   console.log(
     remote
       ? "[db] Using hosted libSQL over HTTP" +

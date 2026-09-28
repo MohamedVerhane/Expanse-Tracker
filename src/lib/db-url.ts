@@ -36,6 +36,11 @@ export function isRemoteDatabaseUrl(url: string): boolean {
   );
 }
 
+/** Strips any embedded credentials so a URL is safe to write to a log. */
+export function redactDatabaseUrl(url: string): string {
+  return url.replace(/^([a-z0-9+.-]+:\/\/)[^@/]*@/i, "$1");
+}
+
 /** The database URL for the SQLite dialect: local `file:` or remote libSQL. */
 export function resolveDatabaseUrl(): string {
   const url = process.env.DATABASE_URL?.trim() || DEFAULT_DATABASE_URL;
@@ -47,7 +52,7 @@ export function resolveDatabaseUrl(): string {
     // Without this the driver would treat e.g. "mysql://user:pass@host/db" as a
     // literal filename and fail much later with a confusing error.
     throw new Error(
-      `DATABASE_URL must be a SQLite "file:" URL or a libSQL "libsql://" URL, but got: ${url}\n` +
+      `DATABASE_URL must be a SQLite "file:" URL or a libSQL "libsql://" URL, but got: ${redactDatabaseUrl(url)}\n` +
         `This app uses SQLite. For a local database or a single server with a ` +
         `persistent volume, set DATABASE_URL="file:./prisma/dev.db" ` +
         `(e.g. "file:/data/expense-tracker.db").\n` +
